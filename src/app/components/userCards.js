@@ -10,12 +10,10 @@ export default function Card({data}) {
 
     useEffect(() => {
         if (!sumData.isCheck) {
-            if (JSON.stringify(data) != JSON.stringify(localStorage.getItem(data.id)) && localStorage.getItem(data.id)) setSumData({data: localStorage.getItem(data.id), isCheck: true});
+            if (JSON.stringify(data) != localStorage.getItem(`${sumData.data.id}`) && localStorage.getItem(`${sumData.data.id}`)) setSumData({data: JSON.parse(localStorage.getItem(`${sumData.data.id}`)), isCheck: true});
             else setSumData({...sumData, isCheck: true});
         }
     });
-
-    console.log((new Date(sumData.data.createdAt)).toLocaleDateString());
 
     if (sumData.isCheck) {
         return (

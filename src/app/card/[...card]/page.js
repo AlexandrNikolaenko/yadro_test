@@ -1,34 +1,16 @@
 'use client'
 
-import { API_HOST } from "@/app/components/host";
+import { API_HOST, APP_HOST } from "@/app/components/host";
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import useGetData from "@/app/components/hooks";
 
 export default function Page() {
     let path = usePathname().split('/');
     let id = path[path.length - 1];
-    console.log(id)
-    let [data, setData] = useState({data: null, isLoad: false, isChecked: false})
-
-    useEffect(() => {
-        if (!data.isChecked) {
-            async function getData() {
-                try {
-                    if (localStorage.getItem(id)) setData({data: localStorage.getItem(id), isLoad: true, isChecked: true});
-                    else {
-                        let res = await fetch(`${API_HOST}/users/${id}`, {method: 'GET'});
-                        if (res.ok) setData({data: await res.json(), isLoad: true, isChecked: true});
-                        else throw new Error(res.status);
-                    }
-                } catch(e) {
-                    console.log(e);
-                    setData({...data, isChecked: true})
-                }
-            }
-            getData();
-        }
-    })
+    let data = useGetData(`${API_HOST}/users/${id}`, id);
 
     if (data.isLoad) {
         return (
@@ -41,6 +23,7 @@ export default function Page() {
                     <p className="text-sm">{(new Date(data.data.createdAt)).toLocaleDateString()}</p>
                     <p className="text-base">{data.data.about}</p>
                 </div>
+                <Link href={`${APP_HOST}/edit/${id}`} className="py-3 px-5 rounded-full shadow-md text-base flex items-center gap-2.5 border-gray-200 border-2"><Image alt="edit" width={20} height={20} src={'/Edit.svg'}/><span className="text-inherit">Edit</span></Link>
             </div>
         )
     }
